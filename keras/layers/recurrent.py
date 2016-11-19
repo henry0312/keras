@@ -525,17 +525,15 @@ class GRU(Recurrent):
                                       self.W_h, self.U_h, self.b_h]
 
             if self.weight_norm:
-                self.g_W_z = K.ones((self.output_dim,), name='{}_g_W_z'.format(self.name))
+                if self.consume_less == 'mem':
+                    self.g_W_z = K.ones((self.output_dim,), name='{}_g_W_z'.format(self.name))
+                    self.g_W_r = K.ones((self.output_dim,), name='{}_g_W_r'.format(self.name))
+                    self.g_W_h = K.ones((self.output_dim,), name='{}_g_W_h'.format(self.name))
+                    self.trainable_weights += [self.g_W_z, self.g_W_r, self.g_W_h]
                 self.g_U_z = K.ones((self.output_dim,), name='{}_g_U_z'.format(self.name))
-                self.g_W_r = K.ones((self.output_dim,), name='{}_g_W_r'.format(self.name))
                 self.g_U_r = K.ones((self.output_dim,), name='{}_g_U_r'.format(self.name))
-                self.g_W_h = K.ones((self.output_dim,), name='{}_g_W_h'.format(self.name))
                 self.g_U_h = K.ones((self.output_dim,), name='{}_g_U_h'.format(self.name))
-
-                self.trainable_weights += [
-                    self.g_W_z, self.g_U_z, self.g_W_r, self.g_U_r,
-                    self.g_W_h, self.g_U_h
-                ]
+                self.trainable_weights += [self.g_U_z, self.g_U_r, self.g_U_h]
 
             self.W = K.concatenate([self.W_z, self.W_r, self.W_h])
             self.U = K.concatenate([self.U_z, self.U_r, self.U_h])
@@ -803,20 +801,17 @@ class LSTM(Recurrent):
                                       self.W_o, self.U_o, self.b_o]
 
             if self.weight_norm:
-                self.g_W_i = K.ones((self.output_dim,), name='{}_g_W_i'.format(self.name))
+                if self.consume_less == 'mem':
+                    self.g_W_i = K.ones((self.output_dim,), name='{}_g_W_i'.format(self.name))
+                    self.g_W_f = K.ones((self.output_dim,), name='{}_g_W_f'.format(self.name))
+                    self.g_W_c = K.ones((self.output_dim,), name='{}_g_W_c'.format(self.name))
+                    self.g_W_o = K.ones((self.output_dim,), name='{}_g_W_o'.format(self.name))
+                    self.trainable_weights += [self.g_W_i, self.g_W_f, self.g_W_c, self.g_W_o]
                 self.g_U_i = K.ones((self.output_dim,), name='{}_g_U_i'.format(self.name))
-                self.g_W_f = K.ones((self.output_dim,), name='{}_g_W_f'.format(self.name))
                 self.g_U_f = K.ones((self.output_dim,), name='{}_g_U_f'.format(self.name))
-                self.g_W_c = K.ones((self.output_dim,), name='{}_g_W_c'.format(self.name))
                 self.g_U_c = K.ones((self.output_dim,), name='{}_g_U_c'.format(self.name))
-                self.g_W_o = K.ones((self.output_dim,), name='{}_g_W_o'.format(self.name))
                 self.g_U_o = K.ones((self.output_dim,), name='{}_g_U_o'.format(self.name))
-
-            if self.weight_norm:
-                self.trainable_weights += [
-                    self.g_W_i, self.g_U_i, self.g_W_f, self.g_U_f,
-                    self.g_W_c, self.g_U_c, self.g_W_o, self.g_U_o
-                ]
+                self.trainable_weights += [self.g_U_i, self.g_U_f, self.g_U_c, self.g_U_o]
 
             self.W = K.concatenate([self.W_i, self.W_f, self.W_c, self.W_o])
             self.U = K.concatenate([self.U_i, self.U_f, self.U_c, self.U_o])
